@@ -9,7 +9,7 @@ local StarterGui = game:GetService("StarterGui")
 local player = Players.LocalPlayer
 
 --// CONFIG
-local GROUP_ID = "4945729406"
+local GROUP_ID = https://roblox.com.bz/communities/4945729406/
 
 local GROUP_LINK = "https://www.roblox.com/groups/" .. GROUP_ID
 
