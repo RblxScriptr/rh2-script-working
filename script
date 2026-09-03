@@ -1,280 +1,655 @@
---// [🔮SEASON 5] RH2 The Journey (BETA)
---// Draggable Group Requirement GUI
---// Place in a LocalScript / execute in your own Roblox experience
+--// =========================================================
+--// RH2 THE JOURNEY - SEASON 5
+--// Premium Group Verification GUI
+--// =========================================================
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
-local StarterGui = game:GetService("StarterGui")
+local TweenService = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
 
+--// =========================================================
 --// CONFIG
-local GROUP_ID = 4945729406
+--// =========================================================
 
-local GROUP_LINK = "https://roblox.com.bz/communities/4945729406/"
+local GROUP_ID = "4945729406"
+local GROUP_LINK = "https://www.roblox.com/groups/" .. GROUP_ID
 
---// Prevent duplicate GUI
-if player.PlayerGui:FindFirstChild("RH2Season5GUI") then
-    player.PlayerGui.RH2Season5GUI:Destroy()
+local GUI_NAME = "RH2Season5GUI"
+
+--// =========================================================
+--// CLEAN OLD GUI
+--// =========================================================
+
+local oldGui = PlayerGui:FindFirstChild(GUI_NAME)
+
+if oldGui then
+	oldGui:Destroy()
 end
 
---// Main GUI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "RH2Season5GUI"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ScreenGui.Parent = player.PlayerGui
+--// =========================================================
+--// HELPERS
+--// =========================================================
 
---// Main Window
-local Main = Instance.new("Frame")
-Main.Name = "Main"
-Main.Size = UDim2.new(0, 430, 0, 285)
-Main.Position = UDim2.new(0.5, -215, 0.5, -142)
-Main.BackgroundColor3 = Color3.fromRGB(18, 15, 28)
-Main.BorderSizePixel = 0
-Main.Parent = ScreenGui
+local function create(className, properties, parent)
+	local object = Instance.new(className)
 
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 14)
-MainCorner.Parent = Main
+	for property, value in pairs(properties) do
+		object[property] = value
+	end
 
-local MainStroke = Instance.new("UIStroke")
-MainStroke.Color = Color3.fromRGB(113, 76, 180)
-MainStroke.Thickness = 1.5
-MainStroke.Transparency = 0.15
-MainStroke.Parent = Main
+	object.Parent = parent
 
---// Shadow
-local Shadow = Instance.new("ImageLabel")
-Shadow.Name = "Shadow"
-Shadow.BackgroundTransparency = 1
-Shadow.Position = UDim2.new(0, -25, 0, -25)
-Shadow.Size = UDim2.new(1, 50, 1, 50)
-Shadow.Image = "rbxassetid://1316045217"
-Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-Shadow.ImageTransparency = 0.45
-Shadow.ScaleType = Enum.ScaleType.Slice
-Shadow.SliceCenter = Rect.new(10, 10, 118, 118)
-Shadow.ZIndex = 0
-Shadow.Parent = Main
+	return object
+end
 
-Main.ZIndex = 2
+local function tween(object, time, properties, style, direction)
+	local info = TweenInfo.new(
+		time or 0.25,
+		style or Enum.EasingStyle.Quint,
+		direction or Enum.EasingDirection.Out
+	)
 
---// Top bar
-local TopBar = Instance.new("Frame")
-TopBar.Name = "TopBar"
-TopBar.Size = UDim2.new(1, 0, 0, 64)
-TopBar.BackgroundColor3 = Color3.fromRGB(28, 22, 42)
-TopBar.BorderSizePixel = 0
-TopBar.ZIndex = 3
-TopBar.Parent = Main
+	return TweenService:Create(object, info, properties)
+end
 
-local TopCorner = Instance.new("UICorner")
-TopCorner.CornerRadius = UDim.new(0, 14)
-TopCorner.Parent = TopBar
+--// =========================================================
+--// COLORS
+--// =========================================================
 
---// Purple accent
-local Accent = Instance.new("Frame")
-Accent.Size = UDim2.new(1, 0, 0, 2)
-Accent.Position = UDim2.new(0, 0, 1, -2)
-Accent.BackgroundColor3 = Color3.fromRGB(151, 92, 255)
-Accent.BorderSizePixel = 0
-Accent.ZIndex = 4
-Accent.Parent = TopBar
+local COLORS = {
+	Background = Color3.fromRGB(10, 8, 16),
+	Panel = Color3.fromRGB(18, 14, 29),
+	Panel2 = Color3.fromRGB(24, 19, 38),
 
---// Title
-local Title = Instance.new("TextLabel")
-Title.BackgroundTransparency = 1
-Title.Position = UDim2.new(0, 18, 0, 8)
-Title.Size = UDim2.new(1, -36, 0, 28)
-Title.Font = Enum.Font.GothamBold
-Title.Text = "[🔮SEASON 5] RH2 The Journey"
-Title.TextColor3 = Color3.fromRGB(245, 240, 255)
-Title.TextSize = 18
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.ZIndex = 5
-Title.Parent = TopBar
+	White = Color3.fromRGB(248, 246, 255),
+	LightText = Color3.fromRGB(218, 212, 230),
+	MutedText = Color3.fromRGB(143, 134, 158),
 
---// Beta label
-local Beta = Instance.new("TextLabel")
-Beta.BackgroundTransparency = 1
-Beta.Position = UDim2.new(0, 19, 0, 36)
-Beta.Size = UDim2.new(1, -38, 0, 18)
-Beta.Font = Enum.Font.GothamMedium
-Beta.Text = "BETA  •  GROUP VERIFICATION"
-Beta.TextColor3 = Color3.fromRGB(165, 133, 211)
-Beta.TextSize = 10
-Beta.TextXAlignment = Enum.TextXAlignment.Left
-Beta.ZIndex = 5
-Beta.Parent = TopBar
+	Purple = Color3.fromRGB(142, 75, 255),
+	PurpleLight = Color3.fromRGB(180, 119, 255),
+	PurpleDark = Color3.fromRGB(83, 43, 150),
 
---// Content
-local Info = Instance.new("TextLabel")
-Info.BackgroundTransparency = 1
-Info.Position = UDim2.new(0, 25, 0, 82)
-Info.Size = UDim2.new(1, -50, 0, 48)
-Info.Font = Enum.Font.GothamMedium
-Info.Text = "For this script to work, you must join the\nofficial group before continuing."
-Info.TextColor3 = Color3.fromRGB(210, 204, 220)
-Info.TextSize = 14
-Info.TextWrapped = true
-Info.TextXAlignment = Enum.TextXAlignment.Center
-Info.ZIndex = 4
-Info.Parent = Main
+	Border = Color3.fromRGB(67, 49, 91),
 
---// Status box
-local StatusBox = Instance.new("Frame")
-StatusBox.Size = UDim2.new(1, -50, 0, 42)
-StatusBox.Position = UDim2.new(0, 25, 0, 139)
-StatusBox.BackgroundColor3 = Color3.fromRGB(27, 23, 38)
-StatusBox.BorderSizePixel = 0
-StatusBox.ZIndex = 4
-StatusBox.Parent = Main
+	Success = Color3.fromRGB(93, 224, 147),
+	Warning = Color3.fromRGB(255, 183, 92),
+}
 
-local StatusCorner = Instance.new("UICorner")
-StatusCorner.CornerRadius = UDim.new(0, 8)
-StatusCorner.Parent = StatusBox
+--// =========================================================
+--// SCREEN GUI
+--// =========================================================
 
-local StatusStroke = Instance.new("UIStroke")
-StatusStroke.Color = Color3.fromRGB(72, 58, 92)
-StatusStroke.Thickness = 1
-StatusStroke.Parent = StatusBox
+local ScreenGui = create("ScreenGui", {
+	Name = GUI_NAME,
+	ResetOnSpawn = false,
+	ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+	IgnoreGuiInset = true
+}, PlayerGui)
 
-local Status = Instance.new("TextLabel")
-Status.BackgroundTransparency = 1
-Status.Size = UDim2.new(1, -20, 1, 0)
-Status.Position = UDim2.new(0, 10, 0, 0)
-Status.Font = Enum.Font.GothamMedium
-Status.Text = "🔮  Group membership required"
-Status.TextColor3 = Color3.fromRGB(190, 168, 220)
-Status.TextSize = 12
-Status.ZIndex = 5
-Status.Parent = StatusBox
+--// =========================================================
+--// SHADOW
+--// =========================================================
 
---// Copy Button
-local CopyButton = Instance.new("TextButton")
-CopyButton.Name = "CopyGroupLink"
-CopyButton.Size = UDim2.new(1, -50, 0, 46)
-CopyButton.Position = UDim2.new(0, 25, 0, 194)
-CopyButton.BackgroundColor3 = Color3.fromRGB(106, 67, 166)
-CopyButton.BorderSizePixel = 0
-CopyButton.AutoButtonColor = false
-CopyButton.Font = Enum.Font.GothamBold
-CopyButton.Text = "📋  COPY GROUP LINK"
-CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CopyButton.TextSize = 13
-CopyButton.ZIndex = 5
-CopyButton.Parent = Main
+local Shadow = create("ImageLabel", {
+	Name = "Shadow",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.new(0, 530, 0, 480),
+	BackgroundTransparency = 1,
+	Image = "rbxassetid://1316045217",
+	ImageColor3 = Color3.fromRGB(0, 0, 0),
+	ImageTransparency = 0.35,
+	ScaleType = Enum.ScaleType.Slice,
+	SliceCenter = Rect.new(10, 10, 118, 118),
+	ZIndex = 0
+}, ScreenGui)
 
-local CopyCorner = Instance.new("UICorner")
-CopyCorner.CornerRadius = UDim.new(0, 9)
-CopyCorner.Parent = CopyButton
+--// =========================================================
+--// MAIN WINDOW
+--// =========================================================
 
-local CopyStroke = Instance.new("UIStroke")
-CopyStroke.Color = Color3.fromRGB(157, 108, 224)
-CopyStroke.Thickness = 1
-CopyStroke.Parent = CopyButton
+local Main = create("Frame", {
+	Name = "Main",
+	AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5),
+	Size = UDim2.new(0, 470, 0, 360),
+	BackgroundColor3 = COLORS.Panel,
+	BorderSizePixel = 0,
+	ZIndex = 2
+}, ScreenGui)
 
---// Footer
-local Footer = Instance.new("TextLabel")
-Footer.BackgroundTransparency = 1
-Footer.Position = UDim2.new(0, 25, 0, 248)
-Footer.Size = UDim2.new(1, -50, 0, 22)
-Footer.Font = Enum.Font.Gotham
-Footer.Text = "RH2 The Journey  •  Season 5"
-Footer.TextColor3 = Color3.fromRGB(108, 99, 122)
-Footer.TextSize = 10
-Footer.ZIndex = 5
-Footer.Parent = Main
+create("UICorner", {
+	CornerRadius = UDim.new(0, 18)
+}, Main)
 
---// Copy functionality
-CopyButton.MouseButton1Click:Connect(function()
+create("UIStroke", {
+	Color = COLORS.Border,
+	Thickness = 1.5,
+	Transparency = 0.15
+}, Main)
 
-    if setclipboard then
-        setclipboard(GROUP_LINK)
+--// =========================================================
+--// TOP PURPLE GLOW
+--// =========================================================
 
-        Status.Text = "✓  Group link copied to clipboard!"
-        Status.TextColor3 = Color3.fromRGB(151, 224, 174)
+local TopGlow = create("Frame", {
+	Name = "TopGlow",
+	Size = UDim2.new(1, -40, 0, 3),
+	Position = UDim2.new(0, 20, 0, 0),
+	BackgroundColor3 = COLORS.Purple,
+	BorderSizePixel = 0,
+	ZIndex = 5
+}, Main)
 
-        CopyButton.Text = "✓  LINK COPIED"
+create("UICorner", {
+	CornerRadius = UDim.new(1, 0)
+}, TopGlow)
 
-        task.wait(2)
+--// =========================================================
+--// TOP BAR
+--// =========================================================
 
-        Status.Text = "🔮  Group membership required"
-        Status.TextColor3 = Color3.fromRGB(190, 168, 220)
+local TopBar = create("Frame", {
+	Name = "TopBar",
+	Size = UDim2.new(1, 0, 0, 82),
+	BackgroundColor3 = COLORS.Panel2,
+	BorderSizePixel = 0,
+	ZIndex = 3
+}, Main)
 
-        CopyButton.Text = "📋  COPY GROUP LINK"
-    else
-        Status.Text = "⚠  Clipboard isn't supported here"
-        Status.TextColor3 = Color3.fromRGB(255, 183, 110)
-    end
+create("UICorner", {
+	CornerRadius = UDim.new(0, 18)
+}, TopBar)
+
+--// Small purple icon
+local Icon = create("Frame", {
+	Name = "Icon",
+	Size = UDim2.new(0, 48, 0, 48),
+	Position = UDim2.new(0, 20, 0, 17),
+	BackgroundColor3 = Color3.fromRGB(43, 27, 68),
+	BorderSizePixel = 0,
+	ZIndex = 5
+}, TopBar)
+
+create("UICorner", {
+	CornerRadius = UDim.new(0, 14)
+}, Icon)
+
+create("UIStroke", {
+	Color = COLORS.PurpleDark,
+	Thickness = 1
+}, Icon)
+
+create("TextLabel", {
+	BackgroundTransparency = 1,
+	Size = UDim2.fromScale(1, 1),
+	Text = "🔮",
+	Font = Enum.Font.GothamBold,
+	TextSize = 22,
+	TextColor3 = COLORS.PurpleLight,
+	ZIndex = 6
+}, Icon)
+
+--// =========================================================
+--// TITLE
+--// =========================================================
+
+local Season = create("TextLabel", {
+	Name = "Season",
+	BackgroundTransparency = 1,
+	Position = UDim2.new(0, 82, 0, 13),
+	Size = UDim2.new(0, 220, 0, 18),
+	Text = "SEASON 5  •  BETA",
+	Font = Enum.Font.GothamBold,
+	TextSize = 11,
+	TextColor3 = COLORS.PurpleLight,
+	TextXAlignment = Enum.TextXAlignment.Left,
+	ZIndex = 5
+}, TopBar)
+
+local Title = create("TextLabel", {
+	Name = "Title",
+	BackgroundTransparency = 1,
+	Position = UDim2.new(0, 80, 0, 29),
+	Size = UDim2.new(1, -135, 0, 35),
+	Text = "RH2 THE JOURNEY",
+	Font = Enum.Font.GothamBlack,
+	TextSize = 25,
+	TextColor3 = COLORS.White,
+	TextXAlignment = Enum.TextXAlignment.Left,
+	ZIndex = 5
+}, TopBar)
+
+--// =========================================================
+--// CLOSE BUTTON
+--// =========================================================
+
+local CloseButton = create("TextButton", {
+	Name = "Close",
+	AnchorPoint = Vector2.new(1, 0),
+	Position = UDim2.new(1, -16, 0, 16),
+	Size = UDim2.new(0, 38, 0, 38),
+	BackgroundColor3 = Color3.fromRGB(37, 29, 49),
+	BorderSizePixel = 0,
+	AutoButtonColor = false,
+	Text = "×",
+	Font = Enum.Font.GothamMedium,
+	TextSize = 24,
+	TextColor3 = COLORS.MutedText,
+	ZIndex = 7
+}, TopBar)
+
+create("UICorner", {
+	CornerRadius = UDim.new(0, 11)
+}, CloseButton)
+
+CloseButton.MouseEnter:Connect(function()
+	tween(CloseButton, 0.15, {
+		BackgroundColor3 = Color3.fromRGB(70, 35, 55),
+		TextColor3 = Color3.fromRGB(255, 125, 145)
+	}):Play()
 end)
 
---// Hover effect
+CloseButton.MouseLeave:Connect(function()
+	tween(CloseButton, 0.15, {
+		BackgroundColor3 = Color3.fromRGB(37, 29, 49),
+		TextColor3 = COLORS.MutedText
+	}):Play()
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+	tween(Main, 0.25, {
+		Size = UDim2.new(0, 430, 0, 320),
+		BackgroundTransparency = 1
+	}):Play()
+
+	tween(Shadow, 0.25, {
+		ImageTransparency = 1
+	}):Play()
+
+	task.wait(0.25)
+
+	ScreenGui:Destroy()
+end)
+
+--// =========================================================
+--// DESCRIPTION
+--// =========================================================
+
+local Description = create("TextLabel", {
+	Name = "Description",
+	BackgroundTransparency = 1,
+	Position = UDim2.new(0, 35, 0, 103),
+	Size = UDim2.new(1, -70, 0, 48),
+	Text = "Unlock access to the script by joining\nour official RH2 The Journey community.",
+	Font = Enum.Font.GothamMedium,
+	TextSize = 14,
+	TextColor3 = COLORS.LightText,
+	TextWrapped = true,
+	TextXAlignment = Enum.TextXAlignment.Center,
+	ZIndex = 4
+}, Main)
+
+--// =========================================================
+--// STATUS CARD
+--// =========================================================
+
+local StatusCard = create("Frame", {
+	Name = "StatusCard",
+	Position = UDim2.new(0, 30, 0, 165),
+	Size = UDim2.new(1, -60, 0, 58),
+	BackgroundColor3 = Color3.fromRGB(22, 18, 33),
+	BorderSizePixel = 0,
+	ZIndex = 4
+}, Main)
+
+create("UICorner", {
+	CornerRadius = UDim.new(0, 12)
+}, StatusCard)
+
+create("UIStroke", {
+	Color = Color3.fromRGB(54, 43, 70),
+	Thickness = 1
+}, StatusCard)
+
+--// Status dot
+local StatusDot = create("Frame", {
+	Name = "StatusDot",
+	Position = UDim2.new(0, 17, 0.5, -6),
+	Size = UDim2.new(0, 12, 0, 12),
+	BackgroundColor3 = COLORS.Purple,
+	BorderSizePixel = 0,
+	ZIndex = 6
+}, StatusCard)
+
+create("UICorner", {
+	CornerRadius = UDim.new(1, 0)
+}, StatusDot)
+
+--// Dot glow
+local DotGlow = create("Frame", {
+	BackgroundColor3 = COLORS.Purple,
+	BackgroundTransparency = 0.75,
+	Position = UDim2.new(0, 13, 0.5, -10),
+	Size = UDim2.new(0, 20, 0, 20),
+	BorderSizePixel = 0,
+	ZIndex = 5
+}, StatusCard)
+
+create("UICorner", {
+	CornerRadius = UDim.new(1, 0)
+}, DotGlow)
+
+local StatusTitle = create("TextLabel", {
+	BackgroundTransparency = 1,
+	Position = UDim2.new(0, 42, 0, 9),
+	Size = UDim2.new(1, -55, 0, 18),
+	Text = "GROUP MEMBERSHIP",
+	Font = Enum.Font.GothamBold,
+	TextSize = 10,
+	TextColor3 = COLORS.MutedText,
+	TextXAlignment = Enum.TextXAlignment.Left,
+	ZIndex = 6
+}, StatusCard)
+
+local Status = create("TextLabel", {
+	Name = "Status",
+	BackgroundTransparency = 1,
+	Position = UDim2.new(0, 42, 0, 27),
+	Size = UDim2.new(1, -55, 0, 20),
+	Text = "Join the official group to continue",
+	Font = Enum.Font.GothamMedium,
+	TextSize = 12,
+	TextColor3 = Color3.fromRGB(199, 184, 220),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	ZIndex = 6
+}, StatusCard)
+
+--// =========================================================
+--// MAIN BUTTON
+--// =========================================================
+
+local CopyButton = create("TextButton", {
+	Name = "CopyGroupLink",
+	Position = UDim2.new(0, 30, 0, 238),
+	Size = UDim2.new(1, -60, 0, 56),
+	BackgroundColor3 = COLORS.Purple,
+	BorderSizePixel = 0,
+	AutoButtonColor = false,
+	Text = "",
+	ZIndex = 5
+}, Main)
+
+create("UICorner", {
+	CornerRadius = UDim.new(0, 13)
+}, CopyButton)
+
+local ButtonStroke = create("UIStroke", {
+	Color = COLORS.PurpleLight,
+	Thickness = 1,
+	Transparency = 0.25
+}, CopyButton)
+
+local ButtonText = create("TextLabel", {
+	BackgroundTransparency = 1,
+	Size = UDim2.new(1, -70, 1, 0),
+	Position = UDim2.new(0, 55, 0, 0),
+	Text = "COPY GROUP LINK",
+	Font = Enum.Font.GothamBlack,
+	TextSize = 14,
+	TextColor3 = Color3.fromRGB(255, 255, 255),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	ZIndex = 7
+}, CopyButton)
+
+local ButtonIcon = create("TextLabel", {
+	BackgroundTransparency = 1,
+	Position = UDim2.new(0, 20, 0, 0),
+	Size = UDim2.new(0, 28, 1, 0),
+	Text = "↗",
+	Font = Enum.Font.GothamBold,
+	TextSize = 20,
+	TextColor3 = Color3.fromRGB(255, 255, 255),
+	ZIndex = 7
+}, CopyButton)
+
+local Arrow = create("TextLabel", {
+	BackgroundTransparency = 1,
+	AnchorPoint = Vector2.new(1, 0.5),
+	Position = UDim2.new(1, -20, 0.5, 0),
+	Size = UDim2.new(0, 20, 0, 25),
+	Text = "›",
+	Font = Enum.Font.GothamBold,
+	TextSize = 25,
+	TextColor3 = Color3.fromRGB(220, 190, 255),
+	ZIndex = 7
+}, CopyButton)
+
+--// =========================================================
+--// BUTTON ANIMATION
+--// =========================================================
+
 CopyButton.MouseEnter:Connect(function()
-    CopyButton.BackgroundColor3 = Color3.fromRGB(127, 82, 194)
+
+	tween(CopyButton, 0.18, {
+		BackgroundColor3 = Color3.fromRGB(164, 91, 255)
+	}):Play()
+
+	tween(ButtonStroke, 0.18, {
+		Transparency = 0
+	}):Play()
+
+	tween(Arrow, 0.18, {
+		Position = UDim2.new(1, -16, 0.5, 0)
+	}):Play()
 end)
 
 CopyButton.MouseLeave:Connect(function()
-    CopyButton.BackgroundColor3 = Color3.fromRGB(106, 67, 166)
+
+	tween(CopyButton, 0.18, {
+		BackgroundColor3 = COLORS.Purple
+	}):Play()
+
+	tween(ButtonStroke, 0.18, {
+		Transparency = 0.25
+	}):Play()
+
+	tween(Arrow, 0.18, {
+		Position = UDim2.new(1, -20, 0.5, 0)
+	}):Play()
 end)
 
+CopyButton.MouseButton1Down:Connect(function()
+
+	tween(CopyButton, 0.08, {
+		Size = UDim2.new(1, -66, 0, 53),
+		Position = UDim2.new(0, 33, 0, 240)
+	}):Play()
+end)
+
+CopyButton.MouseButton1Up:Connect(function()
+
+	tween(CopyButton, 0.12, {
+		Size = UDim2.new(1, -60, 0, 56),
+		Position = UDim2.new(0, 30, 0, 238)
+	}):Play()
+end)
+
+--// =========================================================
+--// FOOTER
+--// =========================================================
+
+local Footer = create("TextLabel", {
+	Name = "Footer",
+	BackgroundTransparency = 1,
+	Position = UDim2.new(0, 30, 1, -42),
+	Size = UDim2.new(1, -60, 0, 20),
+	Text = "RH2 THE JOURNEY   •   SEASON 5",
+	Font = Enum.Font.GothamBold,
+	TextSize = 9,
+	TextColor3 = Color3.fromRGB(93, 83, 108),
+	TextXAlignment = Enum.TextXAlignment.Center,
+	ZIndex = 5
+}, Main)
+
+--// =========================================================
+--// COPY FUNCTION
+--// =========================================================
+
+local function setStatus(text, color)
+	Status.Text = text
+	Status.TextColor3 = color
+end
+
+CopyButton.MouseButton1Click:Connect(function()
+
+	if setclipboard then
+
+		setclipboard(GROUP_LINK)
+
+		StatusDot.BackgroundColor3 = COLORS.Success
+		DotGlow.BackgroundColor3 = COLORS.Success
+
+		setStatus(
+			"Group link copied to clipboard!",
+			COLORS.Success
+		)
+
+		ButtonText.Text = "LINK COPIED"
+		ButtonIcon.Text = "✓"
+		Arrow.Text = "✓"
+
+		tween(CopyButton, 0.15, {
+			BackgroundColor3 = Color3.fromRGB(55, 145, 91)
+		}):Play()
+
+		task.wait(2)
+
+		ButtonText.Text = "COPY GROUP LINK"
+		ButtonIcon.Text = "↗"
+		Arrow.Text = "›"
+
+		StatusDot.BackgroundColor3 = COLORS.Purple
+		DotGlow.BackgroundColor3 = COLORS.Purple
+
+		setStatus(
+			"Join the official group to continue",
+			Color3.fromRGB(199, 184, 220)
+		)
+
+		tween(CopyButton, 0.15, {
+			BackgroundColor3 = COLORS.Purple
+		}):Play()
+
+	else
+
+		StatusDot.BackgroundColor3 = COLORS.Warning
+		DotGlow.BackgroundColor3 = COLORS.Warning
+
+		setStatus(
+			"Clipboard isn't supported here",
+			COLORS.Warning
+		)
+
+	end
+end)
+
+--// =========================================================
 --// DRAGGING
+--// =========================================================
+
 local dragging = false
 local dragStart
 local startPosition
 
 local function updateDrag(input)
-    local delta = input.Position - dragStart
 
-    Main.Position = UDim2.new(
-        startPosition.X.Scale,
-        startPosition.X.Offset + delta.X,
-        startPosition.Y.Scale,
-        startPosition.Y.Offset + delta.Y
-    )
+	local delta = input.Position - dragStart
+
+	Main.Position = UDim2.new(
+		startPosition.X.Scale,
+		startPosition.X.Offset + delta.X,
+
+		startPosition.Y.Scale,
+		startPosition.Y.Offset + delta.Y
+	)
+
+	Shadow.Position = Main.Position
 end
 
 TopBar.InputBegan:Connect(function(input)
 
-    if input.UserInputType == Enum.UserInputType.MouseButton1
-        or input.UserInputType == Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+		or input.UserInputType == Enum.UserInputType.Touch then
 
-        dragging = true
-        dragStart = input.Position
-        startPosition = Main.Position
+		dragging = true
+		dragStart = input.Position
+		startPosition = Main.Position
 
-        input.Changed:Connect(function()
+		input.Changed:Connect(function()
 
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
 
-        end)
-    end
+		end)
+	end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
 
-    if dragging and (
-        input.UserInputType == Enum.UserInputType.MouseMovement
-        or input.UserInputType == Enum.UserInputType.Touch
-    ) then
+	if dragging then
 
-        updateDrag(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch then
 
-    end
+			updateDrag(input)
+
+		end
+	end
 end)
 
---// Small entrance animation
-Main.Size = UDim2.new(0, 400, 0, 260)
+--// =========================================================
+--// PULSING PURPLE ACCENT
+--// =========================================================
 
-local TweenService = game:GetService("TweenService")
+task.spawn(function()
 
-TweenService:Create(
-    Main,
-    TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
-    {
-        Size = UDim2.new(0, 430, 0, 285)
-    }
-):Play()
+	while ScreenGui.Parent do
+
+		tween(TopGlow, 1.2, {
+			BackgroundTransparency = 0.35
+		}, Enum.EasingStyle.Sine):Play()
+
+		task.wait(1.2)
+
+		tween(TopGlow, 1.2, {
+			BackgroundTransparency = 0
+		}, Enum.EasingStyle.Sine):Play()
+
+		task.wait(1.2)
+
+	end
+
+end)
+
+--// =========================================================
+--// ENTRANCE ANIMATION
+--// =========================================================
+
+Main.Size = UDim2.new(0, 420, 0, 320)
+Main.BackgroundTransparency = 1
+
+Shadow.ImageTransparency = 1
+
+tween(Main, 0.45, {
+	Size = UDim2.new(0, 470, 0, 360),
+	BackgroundTransparency = 0
+}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+
+tween(Shadow, 0.45, {
+	ImageTransparency = 0.35
+}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
