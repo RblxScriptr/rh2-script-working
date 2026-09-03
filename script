@@ -1,0 +1,280 @@
+--// [🔮SEASON 5] RH2 The Journey (BETA)
+--// Draggable Group Requirement GUI
+--// Place in a LocalScript / execute in your own Roblox experience
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+
+local player = Players.LocalPlayer
+
+--// CONFIG
+local GROUP_ID = https://roblox.com.bz/communities/4945729406/
+
+local GROUP_LINK = "https://www.roblox.com/groups/" .. GROUP_ID
+
+--// Prevent duplicate GUI
+if player.PlayerGui:FindFirstChild("RH2Season5GUI") then
+    player.PlayerGui.RH2Season5GUI:Destroy()
+end
+
+--// Main GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "RH2Season5GUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = player.PlayerGui
+
+--// Main Window
+local Main = Instance.new("Frame")
+Main.Name = "Main"
+Main.Size = UDim2.new(0, 430, 0, 285)
+Main.Position = UDim2.new(0.5, -215, 0.5, -142)
+Main.BackgroundColor3 = Color3.fromRGB(18, 15, 28)
+Main.BorderSizePixel = 0
+Main.Parent = ScreenGui
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 14)
+MainCorner.Parent = Main
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(113, 76, 180)
+MainStroke.Thickness = 1.5
+MainStroke.Transparency = 0.15
+MainStroke.Parent = Main
+
+--// Shadow
+local Shadow = Instance.new("ImageLabel")
+Shadow.Name = "Shadow"
+Shadow.BackgroundTransparency = 1
+Shadow.Position = UDim2.new(0, -25, 0, -25)
+Shadow.Size = UDim2.new(1, 50, 1, 50)
+Shadow.Image = "rbxassetid://1316045217"
+Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+Shadow.ImageTransparency = 0.45
+Shadow.ScaleType = Enum.ScaleType.Slice
+Shadow.SliceCenter = Rect.new(10, 10, 118, 118)
+Shadow.ZIndex = 0
+Shadow.Parent = Main
+
+Main.ZIndex = 2
+
+--// Top bar
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 64)
+TopBar.BackgroundColor3 = Color3.fromRGB(28, 22, 42)
+TopBar.BorderSizePixel = 0
+TopBar.ZIndex = 3
+TopBar.Parent = Main
+
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(0, 14)
+TopCorner.Parent = TopBar
+
+--// Purple accent
+local Accent = Instance.new("Frame")
+Accent.Size = UDim2.new(1, 0, 0, 2)
+Accent.Position = UDim2.new(0, 0, 1, -2)
+Accent.BackgroundColor3 = Color3.fromRGB(151, 92, 255)
+Accent.BorderSizePixel = 0
+Accent.ZIndex = 4
+Accent.Parent = TopBar
+
+--// Title
+local Title = Instance.new("TextLabel")
+Title.BackgroundTransparency = 1
+Title.Position = UDim2.new(0, 18, 0, 8)
+Title.Size = UDim2.new(1, -36, 0, 28)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "[🔮SEASON 5] RH2 The Journey"
+Title.TextColor3 = Color3.fromRGB(245, 240, 255)
+Title.TextSize = 18
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.ZIndex = 5
+Title.Parent = TopBar
+
+--// Beta label
+local Beta = Instance.new("TextLabel")
+Beta.BackgroundTransparency = 1
+Beta.Position = UDim2.new(0, 19, 0, 36)
+Beta.Size = UDim2.new(1, -38, 0, 18)
+Beta.Font = Enum.Font.GothamMedium
+Beta.Text = "BETA  •  GROUP VERIFICATION"
+Beta.TextColor3 = Color3.fromRGB(165, 133, 211)
+Beta.TextSize = 10
+Beta.TextXAlignment = Enum.TextXAlignment.Left
+Beta.ZIndex = 5
+Beta.Parent = TopBar
+
+--// Content
+local Info = Instance.new("TextLabel")
+Info.BackgroundTransparency = 1
+Info.Position = UDim2.new(0, 25, 0, 82)
+Info.Size = UDim2.new(1, -50, 0, 48)
+Info.Font = Enum.Font.GothamMedium
+Info.Text = "For this script to work, you must join the\\nofficial group before continuing."
+Info.TextColor3 = Color3.fromRGB(210, 204, 220)
+Info.TextSize = 14
+Info.TextWrapped = true
+Info.TextXAlignment = Enum.TextXAlignment.Center
+Info.ZIndex = 4
+Info.Parent = Main
+
+--// Status box
+local StatusBox = Instance.new("Frame")
+StatusBox.Size = UDim2.new(1, -50, 0, 42)
+StatusBox.Position = UDim2.new(0, 25, 0, 139)
+StatusBox.BackgroundColor3 = Color3.fromRGB(27, 23, 38)
+StatusBox.BorderSizePixel = 0
+StatusBox.ZIndex = 4
+StatusBox.Parent = Main
+
+local StatusCorner = Instance.new("UICorner")
+StatusCorner.CornerRadius = UDim.new(0, 8)
+StatusCorner.Parent = StatusBox
+
+local StatusStroke = Instance.new("UIStroke")
+StatusStroke.Color = Color3.fromRGB(72, 58, 92)
+StatusStroke.Thickness = 1
+StatusStroke.Parent = StatusBox
+
+local Status = Instance.new("TextLabel")
+Status.BackgroundTransparency = 1
+Status.Size = UDim2.new(1, -20, 1, 0)
+Status.Position = UDim2.new(0, 10, 0, 0)
+Status.Font = Enum.Font.GothamMedium
+Status.Text = "🔮  Group membership required"
+Status.TextColor3 = Color3.fromRGB(190, 168, 220)
+Status.TextSize = 12
+Status.ZIndex = 5
+Status.Parent = StatusBox
+
+--// Copy Button
+local CopyButton = Instance.new("TextButton")
+CopyButton.Name = "CopyGroupLink"
+CopyButton.Size = UDim2.new(1, -50, 0, 46)
+CopyButton.Position = UDim2.new(0, 25, 0, 194)
+CopyButton.BackgroundColor3 = Color3.fromRGB(106, 67, 166)
+CopyButton.BorderSizePixel = 0
+CopyButton.AutoButtonColor = false
+CopyButton.Font = Enum.Font.GothamBold
+CopyButton.Text = "📋  COPY GROUP LINK"
+CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CopyButton.TextSize = 13
+CopyButton.ZIndex = 5
+CopyButton.Parent = Main
+
+local CopyCorner = Instance.new("UICorner")
+CopyCorner.CornerRadius = UDim.new(0, 9)
+CopyCorner.Parent = CopyButton
+
+local CopyStroke = Instance.new("UIStroke")
+CopyStroke.Color = Color3.fromRGB(157, 108, 224)
+CopyStroke.Thickness = 1
+CopyStroke.Parent = CopyButton
+
+--// Footer
+local Footer = Instance.new("TextLabel")
+Footer.BackgroundTransparency = 1
+Footer.Position = UDim2.new(0, 25, 0, 248)
+Footer.Size = UDim2.new(1, -50, 0, 22)
+Footer.Font = Enum.Font.Gotham
+Footer.Text = "RH2 The Journey  •  Season 5"
+Footer.TextColor3 = Color3.fromRGB(108, 99, 122)
+Footer.TextSize = 10
+Footer.ZIndex = 5
+Footer.Parent = Main
+
+--// Copy functionality
+CopyButton.MouseButton1Click:Connect(function()
+
+    if setclipboard then
+        setclipboard(GROUP_LINK)
+
+        Status.Text = "✓  Group link copied to clipboard!"
+        Status.TextColor3 = Color3.fromRGB(151, 224, 174)
+
+        CopyButton.Text = "✓  LINK COPIED"
+
+        task.wait(2)
+
+        Status.Text = "🔮  Group membership required"
+        Status.TextColor3 = Color3.fromRGB(190, 168, 220)
+
+        CopyButton.Text = "📋  COPY GROUP LINK"
+    else
+        Status.Text = "⚠  Clipboard isn't supported here"
+        Status.TextColor3 = Color3.fromRGB(255, 183, 110)
+    end
+end)
+
+--// Hover effect
+CopyButton.MouseEnter:Connect(function()
+    CopyButton.BackgroundColor3 = Color3.fromRGB(127, 82, 194)
+end)
+
+CopyButton.MouseLeave:Connect(function()
+    CopyButton.BackgroundColor3 = Color3.fromRGB(106, 67, 166)
+end)
+
+--// DRAGGING
+local dragging = false
+local dragStart
+local startPosition
+
+local function updateDrag(input)
+    local delta = input.Position - dragStart
+
+    Main.Position = UDim2.new(
+        startPosition.X.Scale,
+        startPosition.X.Offset + delta.X,
+        startPosition.Y.Scale,
+        startPosition.Y.Offset + delta.Y
+    )
+end
+
+TopBar.InputBegan:Connect(function(input)
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
+        dragging = true
+        dragStart = input.Position
+        startPosition = Main.Position
+
+        input.Changed:Connect(function()
+
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+
+    if dragging and (
+        input.UserInputType == Enum.UserInputType.MouseMovement
+        or input.UserInputType == Enum.UserInputType.Touch
+    ) then
+
+        updateDrag(input)
+
+    end
+end)
+
+--// Small entrance animation
+Main.Size = UDim2.new(0, 400, 0, 260)
+
+local TweenService = game:GetService("TweenService")
+
+TweenService:Create(
+    Main,
+    TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
+    {
+        Size = UDim2.new(0, 430, 0, 285)
+    }
+):Play()
